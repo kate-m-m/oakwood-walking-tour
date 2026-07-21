@@ -32,10 +32,58 @@ a { color: var(--accent); }
 .wrap { max-width: 44rem; margin: 0 auto; padding: 0 1.1rem; }
 
 /* Header / cover */
-.site-header { text-align: center; padding: 2rem 1.1rem 1.4rem; border-bottom: 3px double var(--rule); }
+.site-header { text-align: center; padding: 2rem 1.1rem 1.4rem; }
 .site-header h1 { font-size: 1.9rem; line-height: 1.2; margin: 0 0 .4rem; }
 .site-header .subtitle { color: var(--muted); font-style: italic; margin: 0 auto; max-width: 32rem; }
-.cover { margin: 1.4rem auto 0; max-width: 22rem; border: 1px solid var(--rule); box-shadow: 0 2px 10px rgba(0,0,0,.12); }
+
+/* Full-bleed cover banner (2:1 crop of the 1872 Drie lithograph) */
+.cover-banner { margin: 0; }
+.cover-banner img { width: 100%; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.cover-banner figcaption {
+  color: var(--muted); font-size: .82rem; font-style: italic;
+  text-align: right; padding: .35rem 1.1rem 0; margin: 0 auto; max-width: 70rem;
+}
+
+/* Sticky toolbar: street menu + search */
+.toolbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: .7rem;
+  background: var(--paper); border-bottom: 1px solid var(--rule);
+  padding: .5rem 1.1rem; box-shadow: 0 1px 6px rgba(42,38,32,.07);
+}
+.streets-menu { position: relative; }
+.streets-menu summary {
+  list-style: none; cursor: pointer; user-select: none; white-space: nowrap;
+  color: var(--accent); font-weight: bold; font-size: .95rem;
+  background: var(--card); border: 1px solid var(--rule); border-radius: 3px;
+  padding: .35rem .6rem;
+}
+.streets-menu summary::-webkit-details-marker { display: none; }
+.streets-menu summary::after { content: " ▾"; font-weight: normal; }
+.streets-menu[open] summary::after { content: " ▴"; font-weight: normal; }
+.streets-menu ul {
+  position: absolute; left: 0; top: calc(100% + .4rem);
+  margin: 0; padding: .3rem 0; list-style: none; min-width: 15rem;
+  max-height: 65vh; overflow: auto;
+  background: var(--card); border: 1px solid var(--rule); border-radius: 3px;
+  box-shadow: 0 6px 18px rgba(42,38,32,.16);
+}
+.streets-menu ul a { display: block; padding: .32rem .85rem; text-decoration: none; white-space: nowrap; }
+.streets-menu ul a:hover { background: var(--paper); }
+.streets-menu small { color: var(--muted); }
+.search-box { flex: 1; display: flex; align-items: center; gap: .55rem; }
+#house-search {
+  flex: 1; min-width: 0; font: inherit; font-size: .95rem; color: var(--ink);
+  background: var(--card); border: 1px solid var(--rule); border-radius: 3px;
+  padding: .38rem .65rem;
+}
+#house-search:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.search-count { color: var(--muted); font-size: .85rem; font-style: italic; white-space: nowrap; }
+
+/* While a search is active, show only the matching houses. */
+body.searching .intro, body.searching .map, body.searching .toc,
+body.searching .tours, body.searching .street > figure,
+body.searching .back-to-top { display: none; }
 
 /* Sections */
 section { padding: 1.6rem 0; border-bottom: 1px solid var(--rule); }
@@ -56,8 +104,8 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 .toc a { text-decoration: none; display: block; padding: .15rem 0; }
 .toc a:hover { text-decoration: underline; }
 
-/* Street sections + houses */
-.street { scroll-margin-top: 1rem; }
+/* Street sections + houses (scroll offset clears the sticky toolbar) */
+.street, .toc { scroll-margin-top: 3.9rem; }
 .street .note { font-style: italic; color: var(--muted); }
 .houses { display: block; }
 .house {
@@ -99,8 +147,34 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 <header class="site-header">
 <h1>A Walking Tour of Historic Oakwood</h1>
 <p class="subtitle">A Walking Tour of North Carolina’s largest intact 19th century residential neighborhood</p>
-<img class="cover" src="images/cover.jpg" alt="Cover of the Society for the Preservation of Historic Oakwood walking-tour brochure">
 </header>
+<figure class="cover-banner">
+<img src="images/cover.jpg" alt="Detail from C. Drie’s 1872 Bird’s Eye View of the City of Raleigh, showing Oakwood Cemetery and the blocks that became Historic Oakwood">
+<figcaption>C. Drie, “Bird’s Eye View of the City of Raleigh, North Carolina,” 1872 — Oakwood Cemetery at upper left. Library of Congress.</figcaption>
+</figure>
+<div class="toolbar">
+<details class="streets-menu">
+<summary>Streets</summary>
+<ul>
+<li><a href="#north-bloodworth-street">North Bloodworth Street <small>(22)</small></a></li>
+<li><a href="#north-boundary-street">North Boundary Street <small>(9)</small></a></li>
+<li><a href="#north-east-street">North East Street <small>(17)</small></a></li>
+<li><a href="#elm-street">Elm Street <small>(3)</small></a></li>
+<li><a href="#east-jones-street">East Jones Street <small>(16)</small></a></li>
+<li><a href="#east-lane-street">East Lane Street <small>(11)</small></a></li>
+<li><a href="#linden-avenue">Linden Avenue <small>(5)</small></a></li>
+<li><a href="#new-bern-avenue">New Bern Avenue <small>(2)</small></a></li>
+<li><a href="#oakwood-avenue">Oakwood Avenue <small>(12)</small></a></li>
+<li><a href="#pell-street">Pell Street</a></li>
+<li><a href="#north-person-street">North Person Street <small>(11)</small></a></li>
+<li><a href="#polk-street">Polk Street <small>(15)</small></a></li>
+</ul>
+</details>
+<div class="search-box">
+<input type="search" id="house-search" placeholder="Search address, name, or street" aria-label="Search houses by address, name, or street">
+<span class="search-count" id="search-count" aria-live="polite"></span>
+</div>
+</div>
 <div class="wrap">
 <section class="intro" id="history" aria-labelledby="history-h">
 <h2 id="history-h">A Brief History of Oakwood</h2>
@@ -353,5 +427,55 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 </ul>
 </footer>
 </div>
+<script>
+(function () {
+  var menu = document.querySelector('.streets-menu');
+  if (menu) {
+    menu.addEventListener('click', function (e) {
+      if (e.target.closest('a')) { menu.removeAttribute('open'); }
+    });
+    document.addEventListener('click', function (e) {
+      if (!menu.contains(e.target)) { menu.removeAttribute('open'); }
+    });
+  }
+  var input = document.getElementById('house-search');
+  var count = document.getElementById('search-count');
+  if (!input) { return; }
+  var houses = Array.prototype.slice.call(document.querySelectorAll('article.house'));
+  var streets = Array.prototype.slice.call(document.querySelectorAll('section.street'));
+  function norm(s) {
+    return (s || '').toLowerCase().replace(/[\u201c\u201d\u2018\u2019]/g, '');
+  }
+  houses.forEach(function (h) {
+    h.setAttribute('data-hay', norm(h.getAttribute('data-number') + ' ' +
+      h.getAttribute('data-name') + ' ' + h.getAttribute('data-street')));
+  });
+  function apply() {
+    var q = norm(input.value.trim());
+    document.body.classList.toggle('searching', q !== '');
+    if (q === '') {
+      houses.forEach(function (h) { h.hidden = false; });
+      streets.forEach(function (s) { s.hidden = false; });
+      count.textContent = '';
+      return;
+    }
+    var shown = 0;
+    houses.forEach(function (h) {
+      var hit = h.getAttribute('data-hay').indexOf(q) !== -1;
+      h.hidden = !hit;
+      if (hit) { shown += 1; }
+    });
+    streets.forEach(function (s) {
+      s.hidden = s.querySelector('article.house:not([hidden])') === null;
+    });
+    count.textContent = shown === 0 ? 'No matches' :
+      shown + ' of ' + houses.length + ' houses';
+  }
+  input.addEventListener('input', apply);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { input.value = ''; apply(); }
+  });
+})();
+</script>
 </body>
 </html>
