@@ -599,5 +599,33 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
   });
 })();
 </script>
+<script>
+(function () {
+  var injected = false;
+  function loadAnnotator() {
+    if (injected) { return; }
+    injected = true;
+    var s = document.createElement('script');
+    s.src = 'annotate.js';
+    s.onerror = function () {
+      if (s.parentNode) { s.parentNode.removeChild(s); }
+    };
+    (document.body || document.head || document.documentElement).appendChild(s);
+  }
+  if (/[?&]annotate=1/.test(location.search) || location.hash === '#annotate') {
+    loadAnnotator();
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+      // Once injected, annotate.js owns the Ctrl+Shift+A toggle — do not fight it.
+      if (injected) { return; }
+      e.preventDefault();
+      // annotate.js auto-activates when it sees this hash as it loads.
+      location.hash = '#annotate';
+      loadAnnotator();
+    }
+  });
+})();
+</script>
 </body>
 </html>
