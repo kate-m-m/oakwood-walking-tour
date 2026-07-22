@@ -22,7 +22,7 @@ body {
   background: var(--paper);
   color: var(--ink);
   font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
-  font-size: 17px;
+  font-size: 1.0625rem;
   line-height: 1.62;
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -88,6 +88,17 @@ a { color: var(--accent); }
 .search-btn:hover { background: #6a2626; }
 .search-count { color: var(--muted); font-size: .85rem; font-style: italic; white-space: nowrap; }
 .search-count:empty { display: none; }
+
+/* Text-size controls (same visual family as .search-btn / summary) */
+.font-controls { display: flex; gap: .4rem; }
+.font-btn {
+  min-height: 2.75rem; min-width: 2.75rem; cursor: pointer; line-height: 1;
+  font: inherit; font-size: .95rem; font-weight: bold; color: var(--accent);
+  background: var(--card); border: 1px solid var(--rule); border-radius: 3px;
+  padding: .35rem .5rem;
+}
+.font-btn:disabled { opacity: .45; cursor: default; }
+
 @media (max-width: 560px) {
   /* Narrow screens: the count floats as a chip under the sticky bar so the
      input keeps its width. */
@@ -96,6 +107,10 @@ a { color: var(--accent); }
     background: var(--card); border: 1px solid var(--rule); border-radius: 3px;
     padding: .15rem .5rem;
   }
+  /* Two-row toolbar: Streets + font controls on top, search full-width below. */
+  .toolbar { flex-wrap: wrap; }
+  .search-box { order: 3; flex-basis: 100%; }
+  .font-controls { margin-left: auto; }
 }
 
 /* While a search is active, show only the matching houses. */
@@ -129,8 +144,14 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 .toc a { text-decoration: none; display: block; padding: .15rem 0; }
 .toc a:hover { text-decoration: underline; }
 
-/* Street sections + houses (scroll offset clears the sticky toolbar) */
+/* Street sections + houses (scroll offset clears the sticky toolbar).
+   The mobile override must come AFTER this base rule — media queries add no
+   specificity, so source order decides. */
 .street, .toc { scroll-margin-top: 4.6rem; }
+@media (max-width: 560px) {
+  /* Taller two-row sticky bar: anchor jumps must clear both rows. */
+  .street, .toc { scroll-margin-top: 8.4rem; }
+}
 .street .note { font-style: italic; color: var(--muted); }
 .houses { display: block; }
 .house {
@@ -200,6 +221,7 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 <button type="submit" class="search-btn">Search</button>
 <span class="search-count" id="search-count" aria-live="polite"></span>
 </form>
+<div class="font-controls"><button type="button" class="font-btn" id="font-smaller" aria-label="Make text smaller">A−</button><button type="button" class="font-btn" id="font-larger" aria-label="Make text larger">A+</button></div>
 </div>
 <div class="wrap">
 <section class="intro" id="history" aria-labelledby="history-h">
@@ -477,6 +499,47 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
       readBtn.setAttribute('aria-expanded', opening ? 'true' : 'false');
       readBtn.textContent = opening ? 'Show less' : 'Read the full history';
     });
+  }
+
+  // Text-size control: A- / A+ scale the root font-size through fixed steps and
+  // remember the choice. Comparisons avoid the "less-than" sign so the inline
+  // script parses cleanly (see the note above the search filter).
+  var SCALES = [1, 1.125, 1.25, 1.4, 1.55];
+  var SCALE_KEY = 'oakwood-font-scale';
+  var smaller = document.getElementById('font-smaller');
+  var larger = document.getElementById('font-larger');
+  if (smaller && larger) {
+    var scaleIndex = 0;
+    try {
+      var saved = window.localStorage.getItem(SCALE_KEY);
+      if (saved !== null) {
+        var parsed = parseInt(saved, 10);
+        if (parsed >= 0 && SCALES.length > parsed) { scaleIndex = parsed; }
+      }
+    } catch (readErr) { /* private-mode Safari throws on read; keep default */ }
+    var applyScale = function () {
+      document.documentElement.style.fontSize = (16 * SCALES[scaleIndex]) + 'px';
+      if (scaleIndex >= 1) {
+        smaller.removeAttribute('disabled');
+      } else {
+        smaller.setAttribute('disabled', 'disabled');
+      }
+      if (SCALES.length - 1 > scaleIndex) {
+        larger.removeAttribute('disabled');
+      } else {
+        larger.setAttribute('disabled', 'disabled');
+      }
+      try {
+        window.localStorage.setItem(SCALE_KEY, String(scaleIndex));
+      } catch (writeErr) { /* private-mode Safari throws on write; ignore */ }
+    };
+    smaller.addEventListener('click', function () {
+      if (scaleIndex >= 1) { scaleIndex -= 1; applyScale(); }
+    });
+    larger.addEventListener('click', function () {
+      if (SCALES.length - 1 > scaleIndex) { scaleIndex += 1; applyScale(); }
+    });
+    applyScale();
   }
 
   var input = document.getElementById('house-search');
