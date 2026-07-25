@@ -50,7 +50,16 @@
   --paper: #faf6ee;
   --ink: #2a2620;
   --muted: #6b6256;
-  --accent: #7f5496;        /* Oakwood purple (Kate, 2026-07-23) */
+  /* Two accents, and the split is strict (Kate, 2026-07-25): purple was doing
+     double duty as both decoration and "you can tap this", which taught the
+     reader nothing reliable. Purple is now DECORATIVE ONLY — headings, house
+     numbers, drop caps, the rule down the side of a card. Gold means
+     INTERACTIVE — every link, button, and tappable term, and nothing else.
+     Gold is AAA on paper (7.1:1) and 7.7:1 under white on the filled buttons,
+     which also makes it a stronger cue than the purple it replaces (5.4:1). */
+  --accent: #7f5496;        /* Oakwood purple — decorative (Kate, 2026-07-23) */
+  --link: #6a4f0e;          /* dark gold — interactive (Kate, 2026-07-25) */
+  --link-hover: #523d0b;
   --rule: #d9cfbd;
   --card: #fffdf8;
 }
@@ -68,7 +77,7 @@ body {
 }
 h1, h2, h3 { font-family: Lora, Georgia, serif; }
 img { max-width: 100%; height: auto; display: block; }
-a { color: var(--accent); }
+a { color: var(--link); }
 .wrap { max-width: 44rem; margin: 0 auto; padding: 0 1.1rem; }
 
 /* Header / cover */
@@ -91,7 +100,7 @@ a { color: var(--accent); }
 .streets-menu summary {
   list-style: none; cursor: pointer; user-select: none; white-space: nowrap;
   min-height: 2.75rem; display: inline-flex; align-items: center;
-  color: var(--accent); font-weight: bold; font-size: .95rem;
+  color: var(--link); font-weight: bold; font-size: .95rem;
   background: var(--card); border: 1px solid var(--rule); border-radius: 3px;
   padding: .35rem .6rem;
 }
@@ -116,14 +125,14 @@ a { color: var(--accent); }
   color: var(--ink); background: var(--card); border: 1px solid var(--rule);
   border-radius: 3px; padding: .3rem .65rem;
 }
-#house-search:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+#house-search:focus { outline: 2px solid var(--link); outline-offset: 1px; }
 .search-btn {
   min-height: 2.75rem; cursor: pointer; white-space: nowrap;
   font: inherit; font-size: .95rem; font-weight: bold; color: var(--card);
-  background: var(--accent); border: 1px solid var(--accent); border-radius: 3px;
+  background: var(--link); border: 1px solid var(--link); border-radius: 3px;
   padding: .45rem .95rem;
 }
-.search-btn:hover { background: #6b4680; }
+.search-btn:hover { background: var(--link-hover); }
 .search-count { color: var(--muted); font-size: .85rem; font-style: italic; white-space: nowrap; }
 .search-count:empty { display: none; }
 
@@ -131,7 +140,7 @@ a { color: var(--accent); }
 .font-controls { display: flex; gap: .4rem; }
 .font-btn {
   min-height: 2.75rem; min-width: 2.75rem; cursor: pointer; line-height: 1;
-  font: inherit; font-size: .95rem; font-weight: bold; color: var(--accent);
+  font: inherit; font-size: .95rem; font-weight: bold; color: var(--link);
   background: var(--card); border: 1px solid var(--rule); border-radius: 3px;
   padding: .35rem .5rem;
 }
@@ -150,7 +159,7 @@ a { color: var(--accent); }
 /* While a search is active, show only the matching houses. */
 body.searching .intro, body.searching .map, body.searching .toc,
 body.searching .tours, body.searching .street > figure,
-body.searching .toc-aside, body.searching .glossary { display: none; }
+body.searching .donate, body.searching .glossary { display: none; }
 
 /* Sections */
 section { padding: 1.6rem 0; border-bottom: 1px solid var(--rule); }
@@ -160,13 +169,23 @@ h2 { font-size: 1.5rem; margin: 0 0 .8rem; color: var(--accent); }
   font-family: Lora, Georgia, serif;
   font-size: 3.1rem; line-height: .8; float: left; padding: .1rem .55rem 0 0; color: var(--accent); font-weight: bold;
 }
-.read-more {
-  display: inline-block; margin-top: .2rem; min-height: 2.75rem; cursor: pointer;
-  font: inherit; font-size: .95rem; font-weight: bold; color: var(--accent);
-  background: var(--card); border: 1px solid var(--rule); border-radius: 3px;
-  padding: .5rem 1rem;
+/* "Read the full history" and the per-card "Read more" read as underlined
+   links (Kate, 2026-07-25). They stay BUTTONS in the markup — they toggle
+   content rather than navigate, and a screen reader should announce them that
+   way — but they carry link styling and the gold interactive colour. Same
+   padding/negative-margin trick as .term: the hit box grows without moving a
+   character of text. */
+.read-more, .desc-more {
+  display: inline; cursor: pointer; text-align: left;
+  font: inherit; color: var(--link);
+  background: none; border: none; border-radius: 0;
+  text-decoration: underline; text-underline-offset: .16em;
+  padding: .35em .1em; margin: -.35em -.1em;
 }
-.read-more:hover { background: var(--paper); }
+.read-more:hover, .desc-more:hover { text-decoration-thickness: 2px; }
+.read-more:focus-visible, .desc-more:focus-visible {
+  outline: 2px solid var(--link); outline-offset: 1px;
+}
 
 /* Full-history overlay (opened by "Read the full history") */
 .history-overlay {
@@ -191,10 +210,10 @@ h2 { font-size: 1.5rem; margin: 0 0 .8rem; color: var(--accent); }
   position: sticky; top: 0; float: right; margin-left: 1rem;
   min-height: 2.75rem; cursor: pointer;
   font: inherit; font-size: .95rem; font-weight: bold; color: var(--card);
-  background: var(--accent); border: 1px solid var(--accent); border-radius: 3px;
+  background: var(--link); border: 1px solid var(--link); border-radius: 3px;
   padding: .5rem 1rem;
 }
-.overlay-close:hover { background: #6b4680; }
+.overlay-close:hover { background: var(--link-hover); }
 body.overlay-open { overflow: hidden; }
 
 /* Map */
@@ -211,6 +230,22 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 .toc ul { list-style: none; margin: 0; padding: 0; column-count: 2; column-gap: 1.4rem; }
 .toc li { padding: .25rem 0; break-inside: avoid; }
 .toc-lede { margin: 0 0 .9rem; color: var(--muted); }
+
+/* Donate (between the history and the map) */
+.donate-btn {
+  display: inline-block; min-height: 2.75rem; text-decoration: none;
+  font-weight: bold; color: var(--card); background: var(--link);
+  border: 1px solid var(--link); border-radius: 3px; padding: .6rem 1.1rem;
+}
+.donate-btn:hover { background: var(--link-hover); }
+.tour-link { margin: .3rem 0 1.2rem; }
+.footer-link { margin: .8rem 0 0; }
+
+/* Glossary page chrome */
+.back-link { font-weight: bold; font-size: .95rem; white-space: nowrap;
+  min-height: 2.75rem; display: inline-flex; align-items: center; }
+.back-bottom { margin: 1.4rem 0 2rem; }
+.glossary-data[hidden] { display: none; }
 .toc a { text-decoration: none; display: block; padding: .15rem 0; }
 .toc a:hover { text-decoration: underline; }
 
@@ -238,7 +273,7 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 .to-top {
   position: fixed; right: 1rem; bottom: 1rem; z-index: 30;
   min-height: 2.75rem; cursor: pointer;
-  font: inherit; font-size: .95rem; font-weight: bold; color: var(--accent);
+  font: inherit; font-size: .95rem; font-weight: bold; color: var(--link);
   background: var(--card); border: 1px solid var(--rule); border-radius: 999px;
   padding: .5rem .95rem;
   box-shadow: 0 3px 12px rgba(42,38,32,.18);
@@ -263,7 +298,7 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
   /* text-decoration, not border-bottom: the underline then tracks the text
      itself, so growing the tap area below cannot drag the line away from the
      word and leave it looking like a spell-check squiggle. */
-  text-decoration: underline dotted var(--accent);
+  text-decoration: underline dotted var(--link);
   text-decoration-thickness: 1.5px;
   text-underline-offset: .16em;
   /* Padding grows the touch target vertically to about 36px against a ~27px
@@ -274,10 +309,9 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
   padding: .25em .1em; margin: -.25em -.1em;
   cursor: pointer;
 }
-.term:hover { background: rgba(127, 84, 150, .1); }
-.term:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.term:hover { background: rgba(106, 79, 14, .12); }
+.term:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
 
-.toc-aside { margin: -.4rem 0 1.4rem; font-size: .95rem; color: var(--muted); }
 
 .glossary .glossary-intro { color: var(--muted); margin: 0 0 1.2rem; }
 .gloss-group { margin: 0 0 1.4rem; }
@@ -292,7 +326,7 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 .gloss-entry dd { margin: .1rem 0 0; }
 .gloss-say { font-weight: normal; font-style: italic; color: var(--muted); font-size: .9em; }
 /* Highlight the entry the bottom sheet just sent the reader to. */
-.gloss-entry:target { background: rgba(127, 84, 150, .12); border-radius: 3px;
+.gloss-entry:target { background: rgba(106, 79, 14, .12); border-radius: 3px;
   padding: .35rem .5rem; margin-left: -.5rem; margin-right: -.5rem; }
 
 /* Bottom sheet: slides up from the foot of the screen, page still visible
@@ -319,21 +353,17 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 .term-close {
   display: block; width: 100%; min-height: 2.75rem; cursor: pointer;
   font: inherit; font-size: 1rem; font-weight: bold; color: #fff;
-  background: var(--accent); border: 1px solid var(--accent); border-radius: 3px;
+  background: var(--link); border: 1px solid var(--link); border-radius: 3px;
   padding: .5rem 1rem;
 }
-.term-close:hover { background: #6b4680; }
+.term-close:hover { background: var(--link-hover); }
 
 /* Collapsed house entries: "Read more" reveals the rest in place. */
 .desc-rest[hidden] { display: none; }
 .desc-ellipsis[hidden] { display: none; }
-.desc-more {
-  display: block; margin: .5rem 0 0; min-height: 2.75rem; cursor: pointer;
-  font: inherit; font-size: .95rem; font-weight: bold; color: var(--accent);
-  background: none; border: 1px solid var(--rule); border-radius: 3px;
-  padding: .45rem .8rem; text-align: left; width: 100%;
-}
-.desc-more:hover { background: var(--paper); }
+/* .desc-more shares the .read-more rule above. A space before it keeps the
+   link from butting against the truncated sentence. */
+.desc-more { margin-left: .25em; }
 
 /* Desktop: widen the measure and lay houses out in a responsive grid. */
 @media (min-width: 720px) {
@@ -380,6 +410,11 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 <p>Oakwood grew from woods and fields on Raleigh’s northeastern edge into the city’s fashionable streetcar suburb between the 1870s and the early 1900s, then slid into decades of decline after World War I. When the State moved to level the neighborhood for an expressway in the 1960s, residents fought back, founded the Society for the Preservation of Historic Oakwood in 1972, and won historic-district protection. Today Oakwood is North Carolina’s largest intact 19th-century residential neighborhood.</p>
 <button type="button" class="read-more" id="read-more" aria-haspopup="dialog">Read the full history</button>
 </section>
+<section class="donate" id="donate" aria-labelledby="donate-h">
+<h2 id="donate-h">Support Historic Oakwood</h2>
+<p>The Society for the Preservation of Historic Oakwood is a 501(c)(3) nonprofit dedicated to the preservation and protection of Historic Oakwood. If you enjoyed walking the neighborhood, please consider making a donation.</p>
+<p><a class="donate-btn" href="https://www.historicoakwood.org/store/donation" target="_blank" rel="noopener">Donate to the Society</a></p>
+</section>
 <section class="map" id="map" aria-labelledby="map-h">
 <h2 id="map-h">Neighborhood Map</h2>
 <figure><img src="images/map.png" alt="Map of the Historic Oakwood neighborhood from the center of the brochure"></figure>
@@ -402,7 +437,6 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 <li><a href="#polk-street">Polk Street</a></li>
 </ul>
 </nav>
-<p class="toc-aside">Not sure what a word means? <a href="#glossary">See the glossary of architectural terms</a>.</p>
 <main>
 <section class="street" id="north-bloodworth-street" aria-labelledby="north-bloodworth-street-h">
 <h2 id="north-bloodworth-street-h">North Bloodworth Street</h2>
@@ -592,401 +626,138 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 <h2 id="tours-h">Guided Tours</h2>
 <h3>Candlelight Tour</h3>
 <p>The Historic Oakwood Candlelight Tour® is held the second full weekend of December. Tour goers are treated to docent-led interior tours of a dozen Oakwood properties dressed for the holidays. This is the only tour in which private homes are open to the public and is the primary funding source for the SPHO. Tickets are required and go on sale in early November. Visit the Historic Oakwood website for more information.</p>
+<p class="tour-link"><a href="https://www.historicoakwood.org/historic-oakwood-candlelight-tour" target="_blank" rel="noopener">Candlelight Tour details and tickets</a></p>
 <h3>Garden Tour and Tea</h3>
 <p>The Oakwood Garden Club hosts an annual Garden Tour and Tea in late April or early May. After a traditional Victorian Tea, tour goers are taken on a guided tour of several Oakwood Gardens. Hats are encouraged.</p>
+<p class="tour-link"><a href="https://www.historicoakwood.org/garden-tour-tea" target="_blank" rel="noopener">Garden Tour and Tea details</a></p>
 <h3>Ghost and Haunted Tours</h3>
 <p>Several other groups and organizations host “haunted”, “scary” or “ghost” tours of the neighborhood and/or cemetery in October. Google or visit the Oakwood Facebook page to find out more.</p>
+<p class="tour-link"><a href="https://www.facebook.com/HistoricOakwood" target="_blank" rel="noopener">Historic Oakwood on Facebook</a></p>
 </section>
+<div class="glossary-data" id="glossary-data" hidden>
 <section class="glossary" id="glossary" aria-labelledby="glossary-h">
 <h2 id="glossary-h">Architectural Terms</h2>
-<p class="glossary-intro">The brochure text uses the vocabulary preservationists use. Tap any underlined word as you read, or browse the whole list here.</p>
 <div class="gloss-group">
 <h3>Styles and periods</h3>
 <dl class="gloss-list">
-<div class="gloss-entry" id="term-queen-anne">
-<dt><span class="gloss-term">Queen Anne</span></dt>
-<dd>The most exuberant style of the late 1800s, built for variety and surprise. Look for an irregular shape, a tower or bay pushing out of one corner, a porch that turns the corner with it, and several different wall textures on the same house.</dd>
-</div>
-<div class="gloss-entry" id="term-neoclassical-revival">
-<dt><span class="gloss-term">Neoclassical Revival</span></dt>
-<dd>The style that swept the country after the 1893 world&#x27;s fair in Chicago, borrowing columns, pediments, and symmetry from ancient Greece and Rome. In Oakwood it was often added on top of an older Queen Anne house, so you will see both on one facade.</dd>
-</div>
-<div class="gloss-entry" id="term-italianate">
-<dt><span class="gloss-term">Italianate</span></dt>
-<dd>A mid-1800s style loosely modeled on Italian villas. Look for tall, narrow windows with arched tops, a low-pitched roof, and rows of decorative brackets under wide eaves.</dd>
-</div>
-<div class="gloss-entry" id="term-second-empire">
-<dt><span class="gloss-term">Second Empire</span></dt>
-<dd>A style named for the France of Napoleon III and easiest to spot by its mansard roof, frequently set on a central tower.</dd>
-</div>
-<div class="gloss-entry" id="term-craftsman">
-<dt><span class="gloss-term">Craftsman</span></dt>
-<dd>An early-1900s style that shows how a house is put together instead of hiding it: rafter ends left exposed, sturdy tapered porch posts on brick piers, deep eaves, and plain, solid materials.</dd>
-</div>
-<div class="gloss-entry" id="term-bungalow">
-<dt><span class="gloss-term">Bungalow</span></dt>
-<dd>A low, wide house of one or one-and-a-half stories with a broad front porch under a low roof — the everyday house of the Craftsman era.</dd>
-</div>
-<div class="gloss-entry" id="term-gothic-revival">
-<dt><span class="gloss-term">Gothic Revival</span></dt>
-<dd>A style borrowed from medieval churches, with steep gables, pointed arches, and heavy stonework.</dd>
-</div>
-<div class="gloss-entry" id="term-colonial-revival">
-<dt><span class="gloss-term">Colonial Revival</span></dt>
-<dd>A return to the look of early American colonial building — symmetrical fronts, shutters, and classical doorways — popular from about 1900 onward.</dd>
-</div>
-<div class="gloss-entry" id="term-spanish-colonial-revival">
-<dt><span class="gloss-term">Spanish Colonial Revival</span></dt>
-<dd>A 1920s style drawing on the Spanish missions of the Southwest, and a favorite for gas stations and storefronts of that decade. Look for stucco walls, red tile roofs, and arched openings.</dd>
-</div>
-<div class="gloss-entry" id="term-dutch-colonial">
-<dt><span class="gloss-term">Dutch Colonial Revival</span></dt>
-<dd>The version of Colonial Revival built under a gambrel roof, whose double slope makes the upper floor roomy enough to live in.</dd>
-</div>
-<div class="gloss-entry" id="term-victorian">
-<dt><span class="gloss-term">Victorian</span></dt>
-<dd>A catchall for the decorated houses of the late 1800s. The Society uses &quot;Mid-Victorian&quot; for the local, simpler versions built roughly between 1850 and 1890.</dd>
-</div>
-<div class="gloss-entry" id="term-vernacular">
-<dt><span class="gloss-term">Vernacular</span></dt>
-<dd>The building tradition of a particular region rather than a national style — the forms local carpenters already knew, repeated and adapted. Most of Oakwood&#x27;s older houses are vernacular before they are anything else.</dd>
-</div>
-<div class="gloss-entry" id="term-prairie-style">
-<dt><span class="gloss-term">Prairie Style</span></dt>
-<dd>An early-1900s style built around horizontal lines: a low roof, wide overhangs, and windows set in groups rather than singly.</dd>
-</div>
-<div class="gloss-entry" id="term-chinoiserie">
-<dt><span class="gloss-term">Chinoiserie</span> <span class="gloss-say">say “sheen-WAH-zuh-ree”</span></dt>
-<dd>European decoration imitating Chinese design. On an Oakwood porch it means a railing of crisscrossed flat slats, a pattern the Society notes was popular in Raleigh.</dd>
-</div>
+<div class="gloss-entry" id="term-queen-anne"><dt><span class="gloss-term">Queen Anne</span></dt><dd>The most exuberant style of the late 1800s, built for variety and surprise. Look for an irregular shape, a tower or bay pushing out of one corner, a porch that turns the corner with it, and several different wall textures on the same house.</dd></div>
+<div class="gloss-entry" id="term-neoclassical-revival"><dt><span class="gloss-term">Neoclassical Revival</span></dt><dd>The style that swept the country after the 1893 world&#x27;s fair in Chicago, borrowing columns, pediments, and symmetry from ancient Greece and Rome. In Oakwood it was often added on top of an older Queen Anne house, so you will see both on one facade.</dd></div>
+<div class="gloss-entry" id="term-italianate"><dt><span class="gloss-term">Italianate</span></dt><dd>A mid-1800s style loosely modeled on Italian villas. Look for tall, narrow windows with arched tops, a low-pitched roof, and rows of decorative brackets under wide eaves.</dd></div>
+<div class="gloss-entry" id="term-second-empire"><dt><span class="gloss-term">Second Empire</span></dt><dd>A style named for the France of Napoleon III and easiest to spot by its mansard roof, frequently set on a central tower.</dd></div>
+<div class="gloss-entry" id="term-craftsman"><dt><span class="gloss-term">Craftsman</span></dt><dd>An early-1900s style that shows how a house is put together instead of hiding it: rafter ends left exposed, sturdy tapered porch posts on brick piers, deep eaves, and plain, solid materials.</dd></div>
+<div class="gloss-entry" id="term-bungalow"><dt><span class="gloss-term">Bungalow</span></dt><dd>A low, wide house of one or one-and-a-half stories with a broad front porch under a low roof — the everyday house of the Craftsman era.</dd></div>
+<div class="gloss-entry" id="term-gothic-revival"><dt><span class="gloss-term">Gothic Revival</span></dt><dd>A style borrowed from medieval churches, with steep gables, pointed arches, and heavy stonework.</dd></div>
+<div class="gloss-entry" id="term-colonial-revival"><dt><span class="gloss-term">Colonial Revival</span></dt><dd>A return to the look of early American colonial building — symmetrical fronts, shutters, and classical doorways — popular from about 1900 onward.</dd></div>
+<div class="gloss-entry" id="term-spanish-colonial-revival"><dt><span class="gloss-term">Spanish Colonial Revival</span></dt><dd>A 1920s style drawing on the Spanish missions of the Southwest, and a favorite for gas stations and storefronts of that decade. Look for stucco walls, red tile roofs, and arched openings.</dd></div>
+<div class="gloss-entry" id="term-dutch-colonial"><dt><span class="gloss-term">Dutch Colonial Revival</span></dt><dd>The version of Colonial Revival built under a gambrel roof, whose double slope makes the upper floor roomy enough to live in.</dd></div>
+<div class="gloss-entry" id="term-victorian"><dt><span class="gloss-term">Victorian</span></dt><dd>A catchall for the decorated houses of the late 1800s. The Society uses &quot;Mid-Victorian&quot; for the local, simpler versions built roughly between 1850 and 1890.</dd></div>
+<div class="gloss-entry" id="term-vernacular"><dt><span class="gloss-term">Vernacular</span></dt><dd>The building tradition of a particular region rather than a national style — the forms local carpenters already knew, repeated and adapted. Most of Oakwood&#x27;s older houses are vernacular before they are anything else.</dd></div>
+<div class="gloss-entry" id="term-prairie-style"><dt><span class="gloss-term">Prairie Style</span></dt><dd>An early-1900s style built around horizontal lines: a low roof, wide overhangs, and windows set in groups rather than singly.</dd></div>
+<div class="gloss-entry" id="term-chinoiserie"><dt><span class="gloss-term">Chinoiserie</span> <span class="gloss-say">say “sheen-WAH-zuh-ree”</span></dt><dd>European decoration imitating Chinese design. On an Oakwood porch it means a railing of crisscrossed flat slats, a pattern the Society notes was popular in Raleigh.</dd></div>
 </dl>
 </div>
 <div class="gloss-group">
 <h3>House shapes</h3>
 <dl class="gloss-list">
-<div class="gloss-entry" id="term-triple-a">
-<dt><span class="gloss-term">Triple-A house</span></dt>
-<dd>A house with three gables — one at each end, plus a third in the middle of the front. The center gable throws rainwater off to the sides instead of onto whoever is walking up to the door. Very common in North Carolina after 1880.</dd>
-</div>
-<div class="gloss-entry" id="term-gable-front-and-wing">
-<dt><span class="gloss-term">Gable-front-and-wing</span></dt>
-<dd>An L-shaped house. About a third of the front is the gable end, the other two-thirds is the wing, and the porch tucks into the corner in front of the wing.</dd>
-</div>
-<div class="gloss-entry" id="term-side-hall">
-<dt><span class="gloss-term">Side-hall plan</span></dt>
-<dd>A house with its hallway running down one side and the rooms lined up along the other. Narrow and deep, which suited a town lot better than a wide country house did.</dd>
-</div>
-<div class="gloss-entry" id="term-shotgun">
-<dt><span class="gloss-term">Shotgun house</span></dt>
-<dd>A one-story house one room wide and several rooms deep, with no hallway. The name comes from the idea that a shot fired through the front door would pass through every room and out the back.</dd>
-</div>
-<div class="gloss-entry" id="term-porte-cochere">
-<dt><span class="gloss-term">Porte-cochere</span> <span class="gloss-say">say “port-koh-SHAIR”</span></dt>
-<dd>A roof extending from the house over the driveway, so passengers could get out of a carriage or car without standing in the rain.</dd>
-</div>
-<div class="gloss-entry" id="term-carriage-house">
-<dt><span class="gloss-term">Carriage house</span></dt>
-<dd>A small building behind the house that sheltered the carriage and horses — the ancestor of the garage.</dd>
-</div>
-<div class="gloss-entry" id="term-duplex">
-<dt><span class="gloss-term">Duplex</span></dt>
-<dd>One building divided into two separate homes, often built to look like a single large house.</dd>
-</div>
+<div class="gloss-entry" id="term-triple-a"><dt><span class="gloss-term">Triple-A house</span></dt><dd>A house with three gables — one at each end, plus a third in the middle of the front. The center gable throws rainwater off to the sides instead of onto whoever is walking up to the door. Very common in North Carolina after 1880.</dd></div>
+<div class="gloss-entry" id="term-gable-front-and-wing"><dt><span class="gloss-term">Gable-front-and-wing</span></dt><dd>An L-shaped house. About a third of the front is the gable end, the other two-thirds is the wing, and the porch tucks into the corner in front of the wing.</dd></div>
+<div class="gloss-entry" id="term-side-hall"><dt><span class="gloss-term">Side-hall plan</span></dt><dd>A house with its hallway running down one side and the rooms lined up along the other. Narrow and deep, which suited a town lot better than a wide country house did.</dd></div>
+<div class="gloss-entry" id="term-shotgun"><dt><span class="gloss-term">Shotgun house</span></dt><dd>A one-story house one room wide and several rooms deep, with no hallway. The name comes from the idea that a shot fired through the front door would pass through every room and out the back.</dd></div>
+<div class="gloss-entry" id="term-porte-cochere"><dt><span class="gloss-term">Porte-cochere</span> <span class="gloss-say">say “port-koh-SHAIR”</span></dt><dd>A roof extending from the house over the driveway, so passengers could get out of a carriage or car without standing in the rain.</dd></div>
+<div class="gloss-entry" id="term-carriage-house"><dt><span class="gloss-term">Carriage house</span></dt><dd>A small building behind the house that sheltered the carriage and horses — the ancestor of the garage.</dd></div>
+<div class="gloss-entry" id="term-duplex"><dt><span class="gloss-term">Duplex</span></dt><dd>One building divided into two separate homes, often built to look like a single large house.</dd></div>
 </dl>
 </div>
 <div class="gloss-group">
 <h3>Roofs</h3>
 <dl class="gloss-list">
-<div class="gloss-entry" id="term-gable">
-<dt><span class="gloss-term">Gable</span></dt>
-<dd>The triangle of wall left under the two slopes of a roof. Oakwood builders treated the gable as a display case, filling it with shingles, vents, and carved ornament.</dd>
-</div>
-<div class="gloss-entry" id="term-mansard">
-<dt><span class="gloss-term">Mansard roof</span> <span class="gloss-say">say “MAN-sard”</span></dt>
-<dd>A roof with four steep sides and a nearly flat top, which turns the attic into a full floor. Windows poke out through the steep part. The signature of the Second Empire style.</dd>
-</div>
-<div class="gloss-entry" id="term-gambrel">
-<dt><span class="gloss-term">Gambrel roof</span></dt>
-<dd>A roof whose sides each break into two slopes, gentle on top and steep below. The barn-roof shape.</dd>
-</div>
-<div class="gloss-entry" id="term-hip-roof">
-<dt><span class="gloss-term">Hip roof</span></dt>
-<dd>A roof with four sloping sides and no gable.</dd>
-</div>
-<div class="gloss-entry" id="term-gable-on-hip">
-<dt><span class="gloss-term">Gable on hip</span></dt>
-<dd>A small gable riding above a hip roof, so the house gets a decorated triangle without giving up the hipped shape.</dd>
-</div>
-<div class="gloss-entry" id="term-pyramidal">
-<dt><span class="gloss-term">Pyramidal roof</span></dt>
-<dd>A hip roof whose four sides rise to meet at a single point.</dd>
-</div>
-<div class="gloss-entry" id="term-dormer">
-<dt><span class="gloss-term">Dormer</span></dt>
-<dd>A window standing upright in the slope of a roof, with a little roof of its own.</dd>
-</div>
-<div class="gloss-entry" id="term-shed-dormer">
-<dt><span class="gloss-term">Shed dormer</span></dt>
-<dd>A dormer with one flat slope instead of a peak, which lets it run much wider and light a whole upper room.</dd>
-</div>
-<div class="gloss-entry" id="term-eaves">
-<dt><span class="gloss-term">Eaves</span></dt>
-<dd>The lower edge of the roof, where it overhangs the wall. Most of a house&#x27;s decorative brackets and moldings hang here.</dd>
-</div>
-<div class="gloss-entry" id="term-cornice">
-<dt><span class="gloss-term">Cornice</span></dt>
-<dd>The molded band running along the top of a wall where it meets the roof.</dd>
-</div>
-<div class="gloss-entry" id="term-finial">
-<dt><span class="gloss-term">Finial</span></dt>
-<dd>An ornament capping a peak, tower, or post — often a turned wooden spike or an iron point.</dd>
-</div>
-<div class="gloss-entry" id="term-cresting">
-<dt><span class="gloss-term">Cresting</span></dt>
-<dd>A low decorative iron railing running along the ridge of a roof, purely for looks.</dd>
-</div>
-<div class="gloss-entry" id="term-parapet">
-<dt><span class="gloss-term">Parapet</span></dt>
-<dd>A low wall carried up past the edge of the roof, hiding the roofline behind it.</dd>
-</div>
-<div class="gloss-entry" id="term-witchs-hat">
-<dt><span class="gloss-term">Witch&#x27;s hat</span></dt>
-<dd>The steep cone of a roof over a round tower or a rounded porch corner, usually tipped with a finial.</dd>
-</div>
-<div class="gloss-entry" id="term-ogee">
-<dt><span class="gloss-term">Ogee</span> <span class="gloss-say">say “OH-jee”</span></dt>
-<dd>An S-curve. A double-ogee tower roof swells outward and then draws back in, giving the tower a bell shape.</dd>
-</div>
-<div class="gloss-entry" id="term-standing-seam">
-<dt><span class="gloss-term">Standing-seam roof</span></dt>
-<dd>A metal roof made of long panels joined by raised, folded seams that run straight down the slope. The seams are the ridges you can see from the sidewalk.</dd>
-</div>
-<div class="gloss-entry" id="term-terne-metal">
-<dt><span class="gloss-term">Terne metal</span> <span class="gloss-say">say “TURN”</span></dt>
-<dd>Sheet steel coated in a tin-and-lead alloy, used for roofs from the late 1800s. It has a dull finish rather than a bright one, and repainted faithfully it can last more than a century.</dd>
-</div>
-<div class="gloss-entry" id="term-slate">
-<dt><span class="gloss-term">Slate</span></dt>
-<dd>Roofing split from stone into thin tiles. Oakwood&#x27;s slate roofs are often laid in patterns, with bands of different shapes.</dd>
-</div>
+<div class="gloss-entry" id="term-gable"><dt><span class="gloss-term">Gable</span></dt><dd>The triangle of wall left under the two slopes of a roof. Oakwood builders treated the gable as a display case, filling it with shingles, vents, and carved ornament.</dd></div>
+<div class="gloss-entry" id="term-mansard"><dt><span class="gloss-term">Mansard roof</span> <span class="gloss-say">say “MAN-sard”</span></dt><dd>A roof with four steep sides and a nearly flat top, which turns the attic into a full floor. Windows poke out through the steep part. The signature of the Second Empire style.</dd></div>
+<div class="gloss-entry" id="term-gambrel"><dt><span class="gloss-term">Gambrel roof</span></dt><dd>A roof whose sides each break into two slopes, gentle on top and steep below. The barn-roof shape.</dd></div>
+<div class="gloss-entry" id="term-hip-roof"><dt><span class="gloss-term">Hip roof</span></dt><dd>A roof with four sloping sides and no gable.</dd></div>
+<div class="gloss-entry" id="term-gable-on-hip"><dt><span class="gloss-term">Gable on hip</span></dt><dd>A small gable riding above a hip roof, so the house gets a decorated triangle without giving up the hipped shape.</dd></div>
+<div class="gloss-entry" id="term-pyramidal"><dt><span class="gloss-term">Pyramidal roof</span></dt><dd>A hip roof whose four sides rise to meet at a single point.</dd></div>
+<div class="gloss-entry" id="term-dormer"><dt><span class="gloss-term">Dormer</span></dt><dd>A window standing upright in the slope of a roof, with a little roof of its own.</dd></div>
+<div class="gloss-entry" id="term-shed-dormer"><dt><span class="gloss-term">Shed dormer</span></dt><dd>A dormer with one flat slope instead of a peak, which lets it run much wider and light a whole upper room.</dd></div>
+<div class="gloss-entry" id="term-eaves"><dt><span class="gloss-term">Eaves</span></dt><dd>The lower edge of the roof, where it overhangs the wall. Most of a house&#x27;s decorative brackets and moldings hang here.</dd></div>
+<div class="gloss-entry" id="term-cornice"><dt><span class="gloss-term">Cornice</span></dt><dd>The molded band running along the top of a wall where it meets the roof.</dd></div>
+<div class="gloss-entry" id="term-finial"><dt><span class="gloss-term">Finial</span></dt><dd>An ornament capping a peak, tower, or post — often a turned wooden spike or an iron point.</dd></div>
+<div class="gloss-entry" id="term-cresting"><dt><span class="gloss-term">Cresting</span></dt><dd>A low decorative iron railing running along the ridge of a roof, purely for looks.</dd></div>
+<div class="gloss-entry" id="term-parapet"><dt><span class="gloss-term">Parapet</span></dt><dd>A low wall carried up past the edge of the roof, hiding the roofline behind it.</dd></div>
+<div class="gloss-entry" id="term-witchs-hat"><dt><span class="gloss-term">Witch&#x27;s hat</span></dt><dd>The steep cone of a roof over a round tower or a rounded porch corner, usually tipped with a finial.</dd></div>
+<div class="gloss-entry" id="term-ogee"><dt><span class="gloss-term">Ogee</span> <span class="gloss-say">say “OH-jee”</span></dt><dd>An S-curve. A double-ogee tower roof swells outward and then draws back in, giving the tower a bell shape.</dd></div>
+<div class="gloss-entry" id="term-standing-seam"><dt><span class="gloss-term">Standing-seam roof</span></dt><dd>A metal roof made of long panels joined by raised, folded seams that run straight down the slope. The seams are the ridges you can see from the sidewalk.</dd></div>
+<div class="gloss-entry" id="term-terne-metal"><dt><span class="gloss-term">Terne metal</span> <span class="gloss-say">say “TURN”</span></dt><dd>Sheet steel coated in a tin-and-lead alloy, used for roofs from the late 1800s. It has a dull finish rather than a bright one, and repainted faithfully it can last more than a century.</dd></div>
+<div class="gloss-entry" id="term-slate"><dt><span class="gloss-term">Slate</span></dt><dd>Roofing split from stone into thin tiles. Oakwood&#x27;s slate roofs are often laid in patterns, with bands of different shapes.</dd></div>
 </dl>
 </div>
 <div class="gloss-group">
 <h3>Porches, posts, and trim</h3>
 <dl class="gloss-list">
-<div class="gloss-entry" id="term-turned-post">
-<dt><span class="gloss-term">Turned post</span></dt>
-<dd>A post shaped on a lathe as it spins, so it comes out ringed with beads and bulges instead of flat-sided. The most characteristic woodwork of the period.</dd>
-</div>
-<div class="gloss-entry" id="term-chamfered">
-<dt><span class="gloss-term">Chamfered</span> <span class="gloss-say">say “CHAM-ferd”</span></dt>
-<dd>With the sharp corners cut off at an angle. A chamfered porch post reads as eight-sided rather than square.</dd>
-</div>
-<div class="gloss-entry" id="term-battered">
-<dt><span class="gloss-term">Battered</span></dt>
-<dd>Tapered — wider at the bottom than at the top. Craftsman porch posts are usually battered and set on brick piers.</dd>
-</div>
-<div class="gloss-entry" id="term-sawnwork">
-<dt><span class="gloss-term">Sawnwork</span></dt>
-<dd>Flat boards cut into decorative patterns with a scroll saw, then applied to porches and gables. Cheaper than carving, and the reason so many modest houses got fancy trim.</dd>
-</div>
-<div class="gloss-entry" id="term-spindlework">
-<dt><span class="gloss-term">Spindlework</span></dt>
-<dd>A band of small turned spindles, like a row of little table legs, set in a row beneath a porch roof.</dd>
-</div>
-<div class="gloss-entry" id="term-fretwork">
-<dt><span class="gloss-term">Fretwork</span></dt>
-<dd>Openwork ornament cut from thin wood in an interlocking pattern.</dd>
-</div>
-<div class="gloss-entry" id="term-frieze">
-<dt><span class="gloss-term">Frieze</span> <span class="gloss-say">say “FREEZ”</span></dt>
-<dd>The flat horizontal band running just under the eaves or a porch roof, often filled with ornament.</dd>
-</div>
-<div class="gloss-entry" id="term-bracket">
-<dt><span class="gloss-term">Bracket</span></dt>
-<dd>A decorative support tucked under the eaves or a porch roof. Italianate houses use them in pairs, spaced along the wall.</dd>
-</div>
-<div class="gloss-entry" id="term-modillion">
-<dt><span class="gloss-term">Modillion</span> <span class="gloss-say">say “moh-DIL-yun”</span></dt>
-<dd>A bracket laid on its side under the edge of a roof, usually scrolled — larger and bolder than a dentil.</dd>
-</div>
-<div class="gloss-entry" id="term-dentil">
-<dt><span class="gloss-term">Dentil molding</span> <span class="gloss-say">say “DEN-til”</span></dt>
-<dd>A row of small square blocks under the eaves, like a row of teeth.</dd>
-</div>
-<div class="gloss-entry" id="term-mutule">
-<dt><span class="gloss-term">Mutule</span> <span class="gloss-say">say “MYOO-tyool”</span></dt>
-<dd>A flat block on the underside of a Greek Doric cornice. It does the same job as a modillion, but plainer and squared off.</dd>
-</div>
-<div class="gloss-entry" id="term-balustrade">
-<dt><span class="gloss-term">Balustrade</span> <span class="gloss-say">say “BAL-uh-strayd”</span></dt>
-<dd>A railing held up by a row of short posts, called balusters. Look for them along porch edges and roof lines.</dd>
-</div>
-<div class="gloss-entry" id="term-colonnette">
-<dt><span class="gloss-term">Colonnette</span> <span class="gloss-say">say “kah-luh-NET”</span></dt>
-<dd>A small, slender column, frequently set in pairs on a porch.</dd>
-</div>
-<div class="gloss-entry" id="term-fluted">
-<dt><span class="gloss-term">Fluted</span></dt>
-<dd>Cut with shallow vertical grooves running up a column.</dd>
-</div>
-<div class="gloss-entry" id="term-tuscan">
-<dt><span class="gloss-term">Tuscan column</span></dt>
-<dd>The plainest of the classical columns: a smooth shaft with a simple round top and no carving.</dd>
-</div>
-<div class="gloss-entry" id="term-ionic">
-<dt><span class="gloss-term">Ionic column</span> <span class="gloss-say">say “eye-ON-ik”</span></dt>
-<dd>A classical column whose top curls into a pair of scrolls, like a rolled scroll seen end-on.</dd>
-</div>
-<div class="gloss-entry" id="term-capital">
-<dt><span class="gloss-term">Capital</span></dt>
-<dd>The decorated top of a column. The shape of the capital is what tells you which classical order you are looking at.</dd>
-</div>
-<div class="gloss-entry" id="term-pedestal">
-<dt><span class="gloss-term">Pedestal</span></dt>
-<dd>The block a column or post stands on, raising it off the porch floor.</dd>
-</div>
-<div class="gloss-entry" id="term-pilaster">
-<dt><span class="gloss-term">Pilaster</span> <span class="gloss-say">say “pih-LAS-ter”</span></dt>
-<dd>A flattened column attached to the wall — decoration rather than support. Often placed on either side of a front door.</dd>
-</div>
-<div class="gloss-entry" id="term-pediment">
-<dt><span class="gloss-term">Pediment</span></dt>
-<dd>The triangular top of the front of a Greek or Roman temple, borrowed here to crown a doorway, a window, or a gable.</dd>
-</div>
-<div class="gloss-entry" id="term-portico">
-<dt><span class="gloss-term">Portico</span> <span class="gloss-say">say “POR-tih-koh”</span></dt>
-<dd>A porch held up by columns, marking the entrance to the house.</dd>
-</div>
-<div class="gloss-entry" id="term-entablature">
-<dt><span class="gloss-term">Entablature</span> <span class="gloss-say">say “en-TAB-luh-chur”</span></dt>
-<dd>The horizontal band a classical building carries above its columns. It is made of a cornice and a wide flat board, and it continues all the way around the eaves.</dd>
-</div>
-<div class="gloss-entry" id="term-wraparound">
-<dt><span class="gloss-term">Wraparound porch</span></dt>
-<dd>A porch that keeps going around a corner of the house and down a second side.</dd>
-</div>
-<div class="gloss-entry" id="term-rafter-tail">
-<dt><span class="gloss-term">Exposed rafter tails</span></dt>
-<dd>The ends of the roof rafters left visible past the wall instead of boxed in behind trim. A Craftsman signature.</dd>
-</div>
-<div class="gloss-entry" id="term-consumption-porch">
-<dt><span class="gloss-term">Consumption porch</span></dt>
-<dd>A second-story sleeping balcony, from the years when doctors prescribed fresh night air for tuberculosis, then called consumption.</dd>
-</div>
+<div class="gloss-entry" id="term-turned-post"><dt><span class="gloss-term">Turned post</span></dt><dd>A post shaped on a lathe as it spins, so it comes out ringed with beads and bulges instead of flat-sided. The most characteristic woodwork of the period.</dd></div>
+<div class="gloss-entry" id="term-chamfered"><dt><span class="gloss-term">Chamfered</span> <span class="gloss-say">say “CHAM-ferd”</span></dt><dd>With the sharp corners cut off at an angle. A chamfered porch post reads as eight-sided rather than square.</dd></div>
+<div class="gloss-entry" id="term-battered"><dt><span class="gloss-term">Battered</span></dt><dd>Tapered — wider at the bottom than at the top. Craftsman porch posts are usually battered and set on brick piers.</dd></div>
+<div class="gloss-entry" id="term-sawnwork"><dt><span class="gloss-term">Sawnwork</span></dt><dd>Flat boards cut into decorative patterns with a scroll saw, then applied to porches and gables. Cheaper than carving, and the reason so many modest houses got fancy trim.</dd></div>
+<div class="gloss-entry" id="term-spindlework"><dt><span class="gloss-term">Spindlework</span></dt><dd>A band of small turned spindles, like a row of little table legs, set in a row beneath a porch roof.</dd></div>
+<div class="gloss-entry" id="term-fretwork"><dt><span class="gloss-term">Fretwork</span></dt><dd>Openwork ornament cut from thin wood in an interlocking pattern.</dd></div>
+<div class="gloss-entry" id="term-frieze"><dt><span class="gloss-term">Frieze</span> <span class="gloss-say">say “FREEZ”</span></dt><dd>The flat horizontal band running just under the eaves or a porch roof, often filled with ornament.</dd></div>
+<div class="gloss-entry" id="term-bracket"><dt><span class="gloss-term">Bracket</span></dt><dd>A decorative support tucked under the eaves or a porch roof. Italianate houses use them in pairs, spaced along the wall.</dd></div>
+<div class="gloss-entry" id="term-modillion"><dt><span class="gloss-term">Modillion</span> <span class="gloss-say">say “moh-DIL-yun”</span></dt><dd>A bracket laid on its side under the edge of a roof, usually scrolled — larger and bolder than a dentil.</dd></div>
+<div class="gloss-entry" id="term-dentil"><dt><span class="gloss-term">Dentil molding</span> <span class="gloss-say">say “DEN-til”</span></dt><dd>A row of small square blocks under the eaves, like a row of teeth.</dd></div>
+<div class="gloss-entry" id="term-mutule"><dt><span class="gloss-term">Mutule</span> <span class="gloss-say">say “MYOO-tyool”</span></dt><dd>A flat block on the underside of a Greek Doric cornice. It does the same job as a modillion, but plainer and squared off.</dd></div>
+<div class="gloss-entry" id="term-balustrade"><dt><span class="gloss-term">Balustrade</span> <span class="gloss-say">say “BAL-uh-strayd”</span></dt><dd>A railing held up by a row of short posts, called balusters. Look for them along porch edges and roof lines.</dd></div>
+<div class="gloss-entry" id="term-colonnette"><dt><span class="gloss-term">Colonnette</span> <span class="gloss-say">say “kah-luh-NET”</span></dt><dd>A small, slender column, frequently set in pairs on a porch.</dd></div>
+<div class="gloss-entry" id="term-fluted"><dt><span class="gloss-term">Fluted</span></dt><dd>Cut with shallow vertical grooves running up a column.</dd></div>
+<div class="gloss-entry" id="term-tuscan"><dt><span class="gloss-term">Tuscan column</span></dt><dd>The plainest of the classical columns: a smooth shaft with a simple round top and no carving.</dd></div>
+<div class="gloss-entry" id="term-ionic"><dt><span class="gloss-term">Ionic column</span> <span class="gloss-say">say “eye-ON-ik”</span></dt><dd>A classical column whose top curls into a pair of scrolls, like a rolled scroll seen end-on.</dd></div>
+<div class="gloss-entry" id="term-capital"><dt><span class="gloss-term">Capital</span></dt><dd>The decorated top of a column. The shape of the capital is what tells you which classical order you are looking at.</dd></div>
+<div class="gloss-entry" id="term-pedestal"><dt><span class="gloss-term">Pedestal</span></dt><dd>The block a column or post stands on, raising it off the porch floor.</dd></div>
+<div class="gloss-entry" id="term-pilaster"><dt><span class="gloss-term">Pilaster</span> <span class="gloss-say">say “pih-LAS-ter”</span></dt><dd>A flattened column attached to the wall — decoration rather than support. Often placed on either side of a front door.</dd></div>
+<div class="gloss-entry" id="term-pediment"><dt><span class="gloss-term">Pediment</span></dt><dd>The triangular top of the front of a Greek or Roman temple, borrowed here to crown a doorway, a window, or a gable.</dd></div>
+<div class="gloss-entry" id="term-portico"><dt><span class="gloss-term">Portico</span> <span class="gloss-say">say “POR-tih-koh”</span></dt><dd>A porch held up by columns, marking the entrance to the house.</dd></div>
+<div class="gloss-entry" id="term-entablature"><dt><span class="gloss-term">Entablature</span> <span class="gloss-say">say “en-TAB-luh-chur”</span></dt><dd>The horizontal band a classical building carries above its columns. It is made of a cornice and a wide flat board, and it continues all the way around the eaves.</dd></div>
+<div class="gloss-entry" id="term-wraparound"><dt><span class="gloss-term">Wraparound porch</span></dt><dd>A porch that keeps going around a corner of the house and down a second side.</dd></div>
+<div class="gloss-entry" id="term-rafter-tail"><dt><span class="gloss-term">Exposed rafter tails</span></dt><dd>The ends of the roof rafters left visible past the wall instead of boxed in behind trim. A Craftsman signature.</dd></div>
+<div class="gloss-entry" id="term-consumption-porch"><dt><span class="gloss-term">Consumption porch</span></dt><dd>A second-story sleeping balcony, from the years when doctors prescribed fresh night air for tuberculosis, then called consumption.</dd></div>
 </dl>
 </div>
 <div class="gloss-group">
 <h3>Windows and doors</h3>
 <dl class="gloss-list">
-<div class="gloss-entry" id="term-bay-window">
-<dt><span class="gloss-term">Bay window</span></dt>
-<dd>A window that projects out from the wall, making a small alcove in the room inside.</dd>
-</div>
-<div class="gloss-entry" id="term-cutaway-bay">
-<dt><span class="gloss-term">Cutaway bay</span></dt>
-<dd>A bay whose front corners are angled back instead of square, so it reads as half an octagon. The most common bay in Oakwood.</dd>
-</div>
-<div class="gloss-entry" id="term-bow-window">
-<dt><span class="gloss-term">Bow window</span></dt>
-<dd>A bay window that curves in a smooth arc rather than turning corners.</dd>
-</div>
-<div class="gloss-entry" id="term-palladian">
-<dt><span class="gloss-term">Palladian window</span> <span class="gloss-say">say “puh-LAY-dee-un”</span></dt>
-<dd>A group of three windows: a tall arched one in the middle with a shorter square-topped window on each side.</dd>
-</div>
-<div class="gloss-entry" id="term-transom">
-<dt><span class="gloss-term">Transom</span></dt>
-<dd>A window set directly above a door, there to light the hall before houses had electricity.</dd>
-</div>
-<div class="gloss-entry" id="term-fanlight">
-<dt><span class="gloss-term">Fanlight</span></dt>
-<dd>A half-round transom above a door, with bars spreading out like the ribs of a fan.</dd>
-</div>
-<div class="gloss-entry" id="term-sidelight">
-<dt><span class="gloss-term">Sidelights</span></dt>
-<dd>The narrow windows flanking a front door on either side.</dd>
-</div>
-<div class="gloss-entry" id="term-lunette">
-<dt><span class="gloss-term">Lunette</span> <span class="gloss-say">say “loo-NET”</span></dt>
-<dd>A half-moon window, usually tucked into a gable or over a door.</dd>
-</div>
-<div class="gloss-entry" id="term-rose-window">
-<dt><span class="gloss-term">Rose window</span></dt>
-<dd>A round window with spokes radiating from the center, borrowed from church architecture. Also called a wheel window.</dd>
-</div>
-<div class="gloss-entry" id="term-quatrefoil">
-<dt><span class="gloss-term">Quatrefoil</span> <span class="gloss-say">say “KWA-truh-foyl”</span></dt>
-<dd>A four-lobed shape, like a stylized four-leaf clover. The quatrefoil attic vent is the symbol of the Oakwood neighborhood.</dd>
-</div>
-<div class="gloss-entry" id="term-sunburst">
-<dt><span class="gloss-term">Sunburst</span></dt>
-<dd>A carved fan of rays spreading from a center point, usually set high in a gable.</dd>
-</div>
-<div class="gloss-entry" id="term-leaded-glass">
-<dt><span class="gloss-term">Leaded glass</span></dt>
-<dd>Small panes of glass held together by narrow strips of lead, which let a window carry a pattern.</dd>
-</div>
-<div class="gloss-entry" id="term-beveled-glass">
-<dt><span class="gloss-term">Beveled glass</span></dt>
-<dd>Clear glass with its edges ground at an angle, so the border catches the light and throws rainbows across the hall in direct sun.</dd>
-</div>
-<div class="gloss-entry" id="term-stained-glass">
-<dt><span class="gloss-term">Stained glass</span></dt>
-<dd>Colored glass set into a design. In Oakwood it often appears as a border of small colored panes framing a plain center pane.</dd>
-</div>
-<div class="gloss-entry" id="term-diamond-paned">
-<dt><span class="gloss-term">Diamond-paned</span></dt>
-<dd>Glass divided into diamonds instead of rectangles.</dd>
-</div>
-<div class="gloss-entry" id="term-jack-arch">
-<dt><span class="gloss-term">Jack arch</span></dt>
-<dd>A flat arch of wedge-shaped bricks spanning the top of a window or door. It looks like a straight row of brick but carries weight the way a curved arch does.</dd>
-</div>
-<div class="gloss-entry" id="term-door-surround">
-<dt><span class="gloss-term">Door surround</span></dt>
-<dd>The whole frame of trim around a doorway, counting any transom and sidelights.</dd>
-</div>
+<div class="gloss-entry" id="term-bay-window"><dt><span class="gloss-term">Bay window</span></dt><dd>A window that projects out from the wall, making a small alcove in the room inside.</dd></div>
+<div class="gloss-entry" id="term-cutaway-bay"><dt><span class="gloss-term">Cutaway bay</span></dt><dd>A bay whose front corners are angled back instead of square, so it reads as half an octagon. The most common bay in Oakwood.</dd></div>
+<div class="gloss-entry" id="term-bow-window"><dt><span class="gloss-term">Bow window</span></dt><dd>A bay window that curves in a smooth arc rather than turning corners.</dd></div>
+<div class="gloss-entry" id="term-palladian"><dt><span class="gloss-term">Palladian window</span> <span class="gloss-say">say “puh-LAY-dee-un”</span></dt><dd>A group of three windows: a tall arched one in the middle with a shorter square-topped window on each side.</dd></div>
+<div class="gloss-entry" id="term-transom"><dt><span class="gloss-term">Transom</span></dt><dd>A window set directly above a door, there to light the hall before houses had electricity.</dd></div>
+<div class="gloss-entry" id="term-fanlight"><dt><span class="gloss-term">Fanlight</span></dt><dd>A half-round transom above a door, with bars spreading out like the ribs of a fan.</dd></div>
+<div class="gloss-entry" id="term-sidelight"><dt><span class="gloss-term">Sidelights</span></dt><dd>The narrow windows flanking a front door on either side.</dd></div>
+<div class="gloss-entry" id="term-lunette"><dt><span class="gloss-term">Lunette</span> <span class="gloss-say">say “loo-NET”</span></dt><dd>A half-moon window, usually tucked into a gable or over a door.</dd></div>
+<div class="gloss-entry" id="term-rose-window"><dt><span class="gloss-term">Rose window</span></dt><dd>A round window with spokes radiating from the center, borrowed from church architecture. Also called a wheel window.</dd></div>
+<div class="gloss-entry" id="term-quatrefoil"><dt><span class="gloss-term">Quatrefoil</span> <span class="gloss-say">say “KWA-truh-foyl”</span></dt><dd>A four-lobed shape, like a stylized four-leaf clover. The quatrefoil attic vent is the symbol of the Oakwood neighborhood.</dd></div>
+<div class="gloss-entry" id="term-sunburst"><dt><span class="gloss-term">Sunburst</span></dt><dd>A carved fan of rays spreading from a center point, usually set high in a gable.</dd></div>
+<div class="gloss-entry" id="term-leaded-glass"><dt><span class="gloss-term">Leaded glass</span></dt><dd>Small panes of glass held together by narrow strips of lead, which let a window carry a pattern.</dd></div>
+<div class="gloss-entry" id="term-beveled-glass"><dt><span class="gloss-term">Beveled glass</span></dt><dd>Clear glass with its edges ground at an angle, so the border catches the light and throws rainbows across the hall in direct sun.</dd></div>
+<div class="gloss-entry" id="term-stained-glass"><dt><span class="gloss-term">Stained glass</span></dt><dd>Colored glass set into a design. In Oakwood it often appears as a border of small colored panes framing a plain center pane.</dd></div>
+<div class="gloss-entry" id="term-diamond-paned"><dt><span class="gloss-term">Diamond-paned</span></dt><dd>Glass divided into diamonds instead of rectangles.</dd></div>
+<div class="gloss-entry" id="term-jack-arch"><dt><span class="gloss-term">Jack arch</span></dt><dd>A flat arch of wedge-shaped bricks spanning the top of a window or door. It looks like a straight row of brick but carries weight the way a curved arch does.</dd></div>
+<div class="gloss-entry" id="term-door-surround"><dt><span class="gloss-term">Door surround</span></dt><dd>The whole frame of trim around a doorway, counting any transom and sidelights.</dd></div>
 </dl>
 </div>
 <div class="gloss-group">
 <h3>Walls and materials</h3>
 <dl class="gloss-list">
-<div class="gloss-entry" id="term-german-siding">
-<dt><span class="gloss-term">German siding</span></dt>
-<dd>Wood siding with a scooped hollow along the top of each board, which casts a deep shadow line across the wall. Also sold as drop or novelty siding.</dd>
-</div>
-<div class="gloss-entry" id="term-scalloped">
-<dt><span class="gloss-term">Scalloped shingles</span></dt>
-<dd>Wood shingles cut with rounded ends and laid in rows, so the wall reads as bands of half-circles.</dd>
-</div>
-<div class="gloss-entry" id="term-fish-scale">
-<dt><span class="gloss-term">Fish-scale shingles</span></dt>
-<dd>Scalloped shingles laid in overlapping rows so the surface looks like the scales of a fish.</dd>
-</div>
-<div class="gloss-entry" id="term-half-timbering">
-<dt><span class="gloss-term">Half-timbering</span></dt>
-<dd>Dark boards applied over light stucco in a pattern of exposed framing, borrowed from English medieval building. Decoration here, not structure.</dd>
-</div>
-<div class="gloss-entry" id="term-stucco">
-<dt><span class="gloss-term">Stucco</span></dt>
-<dd>A hard plaster coating spread over an exterior wall.</dd>
-</div>
-<div class="gloss-entry" id="term-pressed-tin">
-<dt><span class="gloss-term">Pressed tin</span></dt>
-<dd>Sheet metal stamped into raised patterns and used for roofs, ceilings, and storefront cornices — an affordable stand-in for carved stone or wood.</dd>
-</div>
-<div class="gloss-entry" id="term-gneiss">
-<dt><span class="gloss-term">Gneiss</span> <span class="gloss-say">say “NICE”</span></dt>
-<dd>A hard rock whose light and dark minerals have been squeezed into visible stripes by heat and pressure. The banding is what tells it apart from granite.</dd>
-</div>
-<div class="gloss-entry" id="term-carriage-stone">
-<dt><span class="gloss-term">Carriage stone</span></dt>
-<dd>A stone block set at the curb in line with the front walk, used as a step for climbing in and out of a carriage. Several survive on Oakwood streets.</dd>
-</div>
+<div class="gloss-entry" id="term-german-siding"><dt><span class="gloss-term">German siding</span></dt><dd>Wood siding with a scooped hollow along the top of each board, which casts a deep shadow line across the wall. Also sold as drop or novelty siding.</dd></div>
+<div class="gloss-entry" id="term-scalloped"><dt><span class="gloss-term">Scalloped shingles</span></dt><dd>Wood shingles cut with rounded ends and laid in rows, so the wall reads as bands of half-circles.</dd></div>
+<div class="gloss-entry" id="term-fish-scale"><dt><span class="gloss-term">Fish-scale shingles</span></dt><dd>Scalloped shingles laid in overlapping rows so the surface looks like the scales of a fish.</dd></div>
+<div class="gloss-entry" id="term-half-timbering"><dt><span class="gloss-term">Half-timbering</span></dt><dd>Dark boards applied over light stucco in a pattern of exposed framing, borrowed from English medieval building. Decoration here, not structure.</dd></div>
+<div class="gloss-entry" id="term-stucco"><dt><span class="gloss-term">Stucco</span></dt><dd>A hard plaster coating spread over an exterior wall.</dd></div>
+<div class="gloss-entry" id="term-pressed-tin"><dt><span class="gloss-term">Pressed tin</span></dt><dd>Sheet metal stamped into raised patterns and used for roofs, ceilings, and storefront cornices — an affordable stand-in for carved stone or wood.</dd></div>
+<div class="gloss-entry" id="term-gneiss"><dt><span class="gloss-term">Gneiss</span> <span class="gloss-say">say “NICE”</span></dt><dd>A hard rock whose light and dark minerals have been squeezed into visible stripes by heat and pressure. The banding is what tells it apart from granite.</dd></div>
+<div class="gloss-entry" id="term-carriage-stone"><dt><span class="gloss-term">Carriage stone</span></dt><dd>A stone block set at the curb in line with the front walk, used as a step for climbing in and out of a carriage. Several survive on Oakwood streets.</dd></div>
 </dl>
 </div>
 </section>
+</div>
 <footer class="credits" id="credits">
 <h2>Credits</h2>
 <p>The SPHO is a 501c3 non-profit organization dedicated to the preservation and protection of Historic Oakwood. If you enjoyed visiting Oakwood and using this brochure, please consider making a small donation at www.HistoricOakwood.org and follow us on Facebook at facebook.com/HistoricOakwood</p>
@@ -997,6 +768,7 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 <li>House Illustrations: Lydia Welch and Pamela Shank</li>
 <li>Special thanks to historian Bruce Miller</li>
 </ul>
+<p class="footer-link"><a href="glossary.html">Glossary of architectural terms</a></p>
 <p class="img-credit">Cover image: C. Drie, “Bird’s Eye View of the City of Raleigh, North Carolina,” 1872 — Oakwood Cemetery at upper left. Library of Congress.</p>
 </footer>
 </div>
@@ -1020,7 +792,7 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 <h2 id="term-sheet-h"></h2>
 <p class="term-say" id="term-sheet-say" hidden></p>
 <p class="term-def" id="term-sheet-def"></p>
-<p class="term-more"><a href="#glossary" id="term-sheet-all">See all architectural terms</a></p>
+<p class="term-more"><a href="glossary.html" id="term-sheet-all" data-base="glossary.html">See all architectural terms</a></p>
 <button type="button" class="term-close" id="term-close">Close</button>
 </div>
 </div>
@@ -1168,7 +940,10 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
         sheetSay.textContent = say ? say.textContent : '';
         sheetSay.hidden = !say;
       }
-      if (sheetAll) { sheetAll.setAttribute('href', '#term-' + key); }
+      if (sheetAll) {
+        var base = sheetAll.getAttribute('data-base') || '';
+        sheetAll.setAttribute('href', base + '#term-' + key);
+      }
       lastTerm = btn;
       sheet.hidden = false;
       document.body.classList.add('overlay-open');
