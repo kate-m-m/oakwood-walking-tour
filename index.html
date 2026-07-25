@@ -159,7 +159,8 @@ a { color: var(--link); }
 /* While a search is active, show only the matching houses. */
 body.searching .intro, body.searching .map, body.searching .toc,
 body.searching .tours, body.searching .street > figure,
-body.searching .donate, body.searching .glossary { display: none; }
+body.searching .donate, body.searching .glossary,
+body.searching .illus-card { display: none; }
 
 /* Sections */
 section { padding: 1.6rem 0; border-bottom: 1px solid var(--rule); }
@@ -253,7 +254,7 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 .street, .toc, .glossary { scroll-margin-top: 4.6rem; }
 .street .note { font-style: italic; color: var(--muted); }
 .houses { display: block; }
-.house {
+.house, .illus-card {
   background: var(--card);
   border: 1px solid var(--rule);
   border-left: 4px solid var(--accent);
@@ -261,6 +262,11 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
   padding: .85rem 1rem;
   margin: 0 0 1rem;
 }
+/* An illustration the brochure never tied to a described house. Same card as
+   its neighbours so it does not read as an orphan. */
+.illus-card img { width: 100%; border: 1px solid var(--rule); background: #fff; }
+.illus-card figcaption { margin-top: .5rem; font-style: normal;
+  color: var(--accent); font-weight: 700; }
 .house h3 { margin: 0 0 .45rem; font-size: 1.12rem; line-height: 1.3; font-weight: 600; }
 .house .num { display: block; color: var(--accent); font-weight: 700; }
 .house .hname { display: block; }
@@ -412,7 +418,7 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 </section>
 <section class="donate" id="donate" aria-labelledby="donate-h">
 <h2 id="donate-h">Support Historic Oakwood</h2>
-<p>The Society for the Preservation of Historic Oakwood is a 501(c)(3) nonprofit dedicated to the preservation and protection of Historic Oakwood. If you enjoyed walking the neighborhood, please consider making a donation.</p>
+<p>The Society for the Preservation of Historic Oakwood is a 501(c)(3) nonprofit dedicated to the preservation and protection of Historic Oakwood. If you enjoy walking the neighborhood, please consider making a donation.</p>
 <p><a class="donate-btn" href="https://www.historicoakwood.org/store/donation" target="_blank" rel="noopener">Donate to the Society</a></p>
 </section>
 <section class="map" id="map" aria-labelledby="map-h">
@@ -578,8 +584,8 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 <article class="house" id="oakwood-avenue-526" data-number="526" data-street="Oakwood Avenue" data-name="William P. Clements House"><h3><span class="num">526 Oakwood Avenue</span><span class="hname">William P. Clements House <span class="date">c.1894</span></span></h3><p class="house-desc">Clements was a conductor with the Seaboard Railroad. Notice the charming stick-style porch posts, <button type="button" class="term" data-term="balustrade">balustrade</button>, <button type="button" class="term" data-term="frieze">frieze</button>, and <button type="button" class="term" data-term="bracket">brackets</button> under the <button type="button" class="term" data-term="eaves">eaves</button>. The <button type="button" class="term" data-term="standing-seam">standing-seam</button> metal roof dates to c.1916.</p></article>
 <article class="house" id="oakwood-avenue-530" data-number="530" data-street="Oakwood Avenue" data-name="Drewry-Edgerton-Henderson House"><h3><span class="num">530 Oakwood Avenue</span><span class="hname">Drewry-Edgerton-Henderson House <span class="date">1897</span></span></h3><p class="house-desc">This house was built for John C. Drewry, an insurance broker, minor developer, member of the Raleigh Board of Aldermen, president of the Chamber of Commerce, and later a state senator.<span class="desc-rest" id="oakwood-avenue-530-rest" hidden> It was extensively remodeled in 1920. From 1943 to 1997, this was the home of Vallie Henderson, who founded the Oakwood Garden Club in 1950 and led the movement to preserve Historic Oakwood in the 1970s.</span><button type="button" class="desc-more" aria-expanded="false" aria-controls="oakwood-avenue-530-rest">Read more…</button></p></article>
 <article class="house" id="oakwood-avenue-701" data-number="701" data-street="Oakwood Avenue" data-name="Oakwood Cemetery"><h3><span class="num">701 Oakwood Avenue</span><span class="hname">Oakwood Cemetery <span class="date">1867</span></span></h3><p class="house-desc">The oldest portion of the Cemetery is the Confederate burial ground, established in 1867 on land donated by Henry Mordecai. Here lie 1,390 Civil War soldiers; most of their graves are marked with identical marble stones. In 1870, 36 acres were added and the name Oakwood Cemetery was adopted.<span class="desc-rest" id="oakwood-avenue-701-rest" hidden> It became the resting place for many of Raleigh and North Carolina’s most prominent citizens, and contains many wonderful examples of <button type="button" class="term" data-term="victorian">Victorian</button> and early 20th-century monument art. The entrance gate and the <button type="button" class="term" data-term="gothic-revival">Gothic Revival</button> office were built in 1910 of Raleigh <button type="button" class="term" data-term="gneiss">gneiss</button>, designed by Oakwood architect Harry P. S. Keller. The Gothic Revival “House of Memory” was built in 1935. A detailed guide to the Cemetery is available at the office. The neighborhood derives its name from this cemetery.</span><button type="button" class="desc-more" aria-expanded="false" aria-controls="oakwood-avenue-701-rest">Read more…</button></p></article>
+<figure class="illus-card"><img src="images/oakwood-411.jpg" alt="Illustration of a house at 411 Oakwood Avenue" loading="lazy"><figcaption>411 Oakwood Avenue</figcaption></figure>
 </div>
-<figure><img src="images/oakwood-411.jpg" alt="Illustration of a house at 411 Oakwood Avenue" loading="lazy"><figcaption>411 Oakwood Avenue</figcaption></figure>
 </section>
 <section class="street" id="pell-street" aria-labelledby="pell-street-h">
 <h2 id="pell-street-h">Pell Street</h2>
@@ -760,7 +766,7 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 </div>
 <footer class="credits" id="credits">
 <h2>Credits</h2>
-<p>The SPHO is a 501c3 non-profit organization dedicated to the preservation and protection of Historic Oakwood. If you enjoyed visiting Oakwood and using this brochure, please consider making a small donation at www.HistoricOakwood.org and follow us on Facebook at facebook.com/HistoricOakwood</p>
+<p>The SPHO is a 501c3 non-profit organization dedicated to the preservation and protection of Historic Oakwood. If you enjoyed visiting Oakwood and using this brochure, please consider making a small donation at <a href="https://www.historicoakwood.org" target="_blank" rel="noopener">HistoricOakwood.org</a> and follow us on <a href="https://www.facebook.com/HistoricOakwood" target="_blank" rel="noopener">Facebook</a></p>
 <p class="copyright">© 2026, Society for the Preservation of Historic Oakwood All rights reserved.</p>
 <ul>
 <li>Text by: Matthew M. Brown, SPHO Historian</li>
