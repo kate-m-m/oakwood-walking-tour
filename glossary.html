@@ -425,6 +425,17 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 }
 .maps-link:hover { background: none; text-decoration-thickness: 2px; }
 .maps-link .maps-pin { margin-right: .3em; vertical-align: -.15em; }
+/* Clearance from the Read more / Show less button now sitting directly above
+   (Kate moved the link to the foot of the card, 2026-07-31). Measured, not
+   eyeballed: the maps link's 44px hit box overflows its own line by ~9.6px
+   upward, and .desc-more's hit box overflows ~3.9px downward, so any gap
+   under about 13.5px lets the two overlap — and the card's own control would
+   be the one losing taps to a link that is not visually there.
+   1.1rem measured out at only 2.1px of clearance, which is inside the noise
+   of font fallback and device-pixel rounding, so this is 1.25rem for a ~4.5px
+   cushion. Everything in the sum scales with the reader's text size, so the
+   clearance holds at every A+ step. */
+.maps-row { margin: 1.25rem 0 0; }
 </style>
 </head>
 <body>
