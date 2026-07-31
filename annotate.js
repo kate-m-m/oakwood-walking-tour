@@ -1,6 +1,9 @@
-/* Quiet Luxury annotation overlay — shared across the constellation apps.
- * Canonical source: System Design/design-system/annotate.js (synced to each
- * app's static dir by bin/sync-design-system.sh, like quiet-luxury.css).
+/* Annotation overlay — shared across the constellation apps.
+ * Canonical source: System Design/design-system/annotate.js, synced to each
+ * app's static dir by bin/sync-design-system.sh. As of 2026-07-26 this is the
+ * ONLY shared UI file left: the apps each own their own design system now, and
+ * the shared "Quiet Luxury" stylesheet was retired. This tool has no design
+ * opinion in it, which is why it stayed shared.
  *
  * Usage: press Ctrl+Shift+A (any platform), or load the page with
  * ?annotate=1 (or #annotate) appended to the URL. Click any component to

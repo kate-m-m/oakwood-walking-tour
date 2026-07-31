@@ -275,6 +275,18 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
 .house figure { margin: .6rem 0 .2rem; }
 .house figure img { width: 100%; border: 1px solid var(--rule); background: #fff; }
 
+/* "Open in Google Maps" — one per house whose address resolves to a pin (board
+   request, Josh Klahre, 2026-07-29). It sits between the heading and the
+   description, which is what keeps it clear of the card's own "Read more"
+   button and visible whether the card is collapsed or expanded.
+   Only what all three MAPS_LINK_STYLE variants share lives here: the
+   interactive gold, the focus ring, and a glyph sized in em so A+ / A− scales
+   it with its label. The costume — pill, text, or address — comes from
+   MAPS_STYLE_CSS, appended after this block. */
+.maps-link { color: var(--link); }
+.maps-link:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
+.maps-link .maps-pin { width: 1em; height: 1em; flex: none; }
+
 /* Floating "back to top" button (appears after scrolling down). */
 .to-top {
   position: fixed; right: 1rem; bottom: 1rem; z-index: 30;
@@ -392,6 +404,27 @@ figcaption { color: var(--muted); font-size: .92rem; font-style: italic; margin-
   .wrap { max-width: 70rem; }
   .houses { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* VARIANT 'text' — SHIPPED. The pill's row at roughly half the height: strips
+   the button costume back to an underlined link in the interactive gold and
+   lets it sit on one ordinary line of type.
+   The 44px hit box survives the shrink because vertical padding on an INLINE
+   box grows the touch target without contributing to the line box — the .term
+   technique. Horizontal padding does move text, so an equal negative margin
+   cancels it. .72em is measured, not guessed: an inline box's content height
+   comes from the font's ascent and descent (about 22px here), NOT from the
+   1.62 line-height, so .6em left the target at 41px and missed the rule.
+   No hover background here, unlike .term: at 44px tall a tinted box would
+   spill over the heading above and the description below. */
+.maps-link {
+  display: inline; min-height: 0; white-space: normal;
+  background: none; border: none; border-radius: 0;
+  font-size: 1rem; font-weight: normal;
+  text-decoration: underline; text-underline-offset: .16em;
+  padding: .72em .2em; margin: 0 -.2em;
+}
+.maps-link:hover { background: none; text-decoration-thickness: 2px; }
+.maps-link .maps-pin { margin-right: .3em; vertical-align: -.15em; }
 </style>
 </head>
 <body>
